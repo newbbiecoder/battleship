@@ -4,12 +4,12 @@ describe('Ship', () => {
     let ship1;
 
     beforeEach(() => {
-        ship1 = new Ship(4,2);
+        ship1 = new Ship(2);
     })
 
     test('Hit the ship 1 time and check number of hits', () => {
         ship1.hitShip();
-        expect(ship1.totalHits()).toBe(3);
+        expect(ship1.totalHits()).toBe(1);
     })
 
     test('Hit the ship two times and check if it has sunk', () => {
