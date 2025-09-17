@@ -62,26 +62,33 @@ class Gameboard {
         }
     }
 
-    recieveAttack(length, coordinates) {
-        let ship = new Ship(length);
-        let x = coordinates[0];
-        let y = coordinates[1];
+    recieveAttack(coordinates) {
+        let [x,y] = coordinates;
+        let cell = this.board[x][y];
 
-        if(this.board[x][y] === '-') {
-
-            ship.hitShip();
+        if(cell instanceof Ship) {
+            cell.hitShip();
             this.board[x][y] = 'X';
         }
-
         else {
             this.board[x][y] = '.';
+            return "Miss";
         }
 
-        if(ship.isShipSunk()) console.log("All ships have sunk");
+        if(cell.isShipSunk()) {
+            if(this.allshipsSunk()) {
+                return "All ships have sunk";
+            }
+            return "Ship sunk";
+        }
     }
 
     showBoard() {
         return this.board;
+    }
+
+    allshipsSunk() {
+        return this.board.flat().filter(cell => cell instanceof Ship).every(ship => ship.isShipSunk());
     }
 }
 

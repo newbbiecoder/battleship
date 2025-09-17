@@ -42,13 +42,13 @@ describe('GameBoard', () => {
     })
 
     // Throw error cases
-    describe('Error cases', () => {
+    describe('Error cases in placeShip', () => {
         test('Place a single ship at coordinate [1,2] then place the ship on that same coord again', () => {
             makeBoard.placeShip(1, [1,2]);
             expect(() => makeBoard.placeShip(1, [1,2])).toThrow("Already a ship present");
         })
 
-        test('Place horizontal ships from coordinates [2,3] to [2,5], then place vertical ships from [1,3] to [5,3]', () => {
+        test('Place ship of length 3 from coordinates [2,3] to [2,5], then place vertical ship of length 6 from [1,3] to [5,3]', () => {
             makeBoard.placeShip(3,[[2,3], [2,5]]);
             expect(() => makeBoard.placeShip(6, [[1,3], [5,3]])).toThrow("Already a ship present");
         })
@@ -56,6 +56,56 @@ describe('GameBoard', () => {
         test('Place vertical ships from coordinates [1,1] to [3,1], then place horizontal ships from [2,1] to [4,1]', () => {
             makeBoard.placeShip(4, [[1,1], [3,1]]);
             expect(() => makeBoard.placeShip(3, [[2,1], [4,1]])).toThrow("Already a ship present");
+        })
+    })
+
+    describe('recieveAttack function' , () => {
+        test('Add a single ship of length 1 at coordinate [3,5] then attack it and check if ship sank', () => {
+            makeBoard.placeShip(1, [3,5]);
+            expect(makeBoard.recieveAttack([3,5])).toBe("All ships have sunk")
+        })
+
+        test('Place a ship of length 3 from coordinates [4,3] to [4,5], then attack from [4,3] to [4,5] to see if single ship has sunk', () => {
+            makeBoard.placeShip(3, [[4,3], [4,5]]);
+            makeBoard.recieveAttack([4,3]);
+            makeBoard.recieveAttack([4,4]);
+            expect(makeBoard.recieveAttack([4,5])).toBe("All ships have sunk");
+        })
+
+        test('Place a ship of length 3 from coordinates [4,3] to [4,5], then attack the same, then add another ship of length 1 at [5,5] to see if all ships have sunk', () => {
+            makeBoard.placeShip(3, [[4,3], [4,5]]);
+            makeBoard.placeShip(1, [5,5]);
+            makeBoard.recieveAttack([4,3]);
+            makeBoard.recieveAttack([4,4]);
+            expect(makeBoard.recieveAttack([4,5])).toBe("Ship sunk");
+        })
+
+        test('Place a ship of length 3 from coordinates [4,3] to [4,5] and attack the same, then add another ship of length 1 at [5,5] and attack it, to see if all ships have sunk', () => {
+            makeBoard.placeShip(3, [[4,3], [4,5]]);
+            makeBoard.placeShip(1, [5,5]);
+            makeBoard.recieveAttack([5,5]);
+            makeBoard.recieveAttack([4,3]);
+            makeBoard.recieveAttack([4,4]);
+            expect(makeBoard.recieveAttack([4,5])).toBe("All ships have sunk");
+        })
+
+        test('Place a ship of length 1 at [3,4] and attack it, then check if it is marked by X in board', () => {
+            makeBoard.placeShip(1, [3,4]);
+            makeBoard.recieveAttack([3,4]);
+
+            expect(makeBoard.showBoard()[3][4]).toBe('X');
+        })
+
+        test('Place a ship at [3,4], then attack coordinate [1,2] and check if it is marked by . in board', () => {
+            makeBoard.placeShip(1, [3,4]);
+            makeBoard.recieveAttack([1,2]);
+
+            expect(makeBoard.showBoard()[1][2]).toBe('.');
+        })
+
+        test('Place a ship at [3,4], then attack coordinate [1,2] and check if it returns miss', () => {
+            makeBoard.placeShip(1, [3,4]);
+            expect(makeBoard.recieveAttack([1,2])).toBe("Miss");
         })
     })
 })
