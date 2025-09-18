@@ -92,12 +92,27 @@ class Gameboard {
     }
 }
 
+class Player {
+    constructor(name, isComputer = false) {
+        this.name = name;
+        this.isComputer = isComputer;
+        this.gameboard = new Gameboard();
+        this.gameboard.makeGameboard();
+    }
 
-// let makeBoard = new Gameboard();
-// makeBoard.makeGameboard()
+    attack(opponent, coordinates) {
+        return opponent.gameboard.recieveAttack(coordinates);
+    }
 
-// makeBoard.placeShip(2,[[2,3], [2,4]]);
-// makeBoard.placeShip(6, [[1,3], [5,3]]);
-// console.log(printBoard(makeBoard.showBoard()));
+    randomAttack(opponent) {
+        if(!this.isComputer) return null;
 
-export default {Ship, Gameboard};
+        let x = Math.floor(Math.random() * 10);
+        let y = Math.floor(Math.random() * 10);
+
+        if(opponent.gameboard.showBoard()[x,y] !== 'X') this.attack(opponent, [x,y]);
+        return [x,y];
+    }
+}
+
+export default {Ship, Gameboard, Player};

@@ -108,4 +108,29 @@ describe('GameBoard', () => {
             expect(makeBoard.recieveAttack([1,2])).toBe("Miss");
         })
     })
+
+    describe('Player class test', () => {
+        beforeEach(() => {
+            player1 = new script.Player("Shelby");
+            player2 = new script.Player("Campbell");
+
+            humanPlayer = new script.Player("Superman");
+            computerPlayer = new script.Player("Optimus Prime", true);
+        })
+
+        test("Human player attacking opponent's board", () => {
+            player1.gameboard.placeShip(1, [2,5]);
+            expect(player2.attack(player1, [2,5])).toBe("All ships have sunk");
+            expect(player1.gameboard.showBoard()[2][5]).toBe('X');
+            
+        })
+
+        test('Computer player attacking randomly', () => {
+            let coord = computerPlayer.randomAttack(humanPlayer);
+
+            expect(Array.isArray(coord)).toBe(true);
+            expect(coord.length).toBe(2);
+        })
+
+    })
 })
