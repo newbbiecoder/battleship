@@ -1,6 +1,7 @@
 const container = document.querySelector('.container');
-const pvc = document.querySelector('.modes > p:last-child');
-console.log("HII");
+
+const player1 = document.createElement('input');
+const player2 = document.createElement('input');
 
 function askPlayersNames() {
     container.innerHTML = "";
@@ -14,13 +15,11 @@ function askPlayersNames() {
     askNames.classList.add('askNames');
     container.appendChild(askNames);
 
-    let player1 = document.createElement('input');
     player1.type = "text";
     player1.id = "player1";
     player1.placeholder = "PLAYER 1";
     askNames.appendChild(player1);
 
-    let player2 = document.createElement('input');
     player2.type = "text";
     player2.id = "player2";
     player2.placeholder = "PLAYER 2";
@@ -37,4 +36,4 @@ function askPlayersNames() {
     container.appendChild(submit);
 }
 
-export default {askPlayersNames}
+export default {askPlayersNames, player1, player2}
