@@ -236,3 +236,46 @@ button.submit:hover {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
+
+.player1 {
+    font-family: Orbitron;
+    font-size: 2rem;
+    letter-spacing: 2px;
+
+    color: #00e5ff;
+    text-shadow: 
+        0 0 5px #00e5ff,
+        0 0 10px #00e5ff,
+        0 0 20px #00e5ff,
+        0 0 40px #00e5ff;
+    animation: pulses 1.5s infinite alternate;
+}
+
+.player2 {
+    font-family: Orbitron;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: #ff00ff;
+    text-shadow: 
+        0 0 5px #ff00ff,
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 40px #ff00ff;
+}
+
+@keyframes pulses {
+    from {
+        text-shadow: 
+        0 0 5px #00e5ff,
+        0 0 10px #00e5ff,
+        0 0 20px #00e5ff,
+        0 0 40px #00e5ff;
+    }
+    to {
+        text-shadow: 
+        0 0 10px #00e5ff,
+        0 0 20px #00e5ff,
+        0 0 40px #00e5ff,
+        0 0 60px #00e5ff;
+    }
+}

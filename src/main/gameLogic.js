@@ -6,6 +6,10 @@ const container = document.querySelector('.container');
 
 function createBoards() {
     container.innerHTML = "";
+
+    const playerTurn = document.createElement('div');
+    playerTurn.classList.add('playerTurn');
+    container.appendChild(playerTurn);
     
     const gameUpdates = document.createElement('div');
     gameUpdates.classList.add('gameUpdates');
@@ -71,9 +75,17 @@ let player1Turn = true;
 
 function boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer) {
     const gameUpdates = document.querySelector('.gameUpdates');
+    const playerTurn = document.querySelector('.playerTurn');
 
-    secondPlayerBoardContainer.addEventListener('click', (e) => {
+    const player1Name = document.querySelector('.player1Name');
+    const player2Name = document.querySelector('.player2Name');
+
+    playerTurn.textContent = `${player1Name.textContent}'s Turn`
+    playerTurn.classList.add('player1');
+    
+    function secondEventListener(e) {
         if(!player1Turn) return;
+        playerTurn.textContent = `${player1Name.textContent}'s Turn`;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
 
@@ -85,12 +97,25 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
         console.log("Player 2", result);
         
         updateGameMessage(gameUpdates, result);
-        
+
+        if(result === "Hit" || result === "Ship sunk") return;
+        if(result === "Miss") {
+            playerTurn.classList = "";
+            playerTurn.classList.add("player2");
+            playerTurn.textContent = `${player2Name.textContent}'s Turn`;
+        }
+        if(result === "All ships have sunk") {
+            firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
+            secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
+        }
         player1Turn = false;
-    })
+    }
+
+    secondPlayerBoardContainer.addEventListener('click', secondEventListener)
         
-    firstPlayerBoardContainer.addEventListener('click', (e) => {
+    function firstEventListener(e) {
         if(player1Turn) return;
+        playerTurn.textContent = `${player2Name.textContent}'s Turn`;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
 
@@ -103,8 +128,20 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 
         updateGameMessage(gameUpdates, result);
 
+        if(result === "Hit" || result === "Ship sunk") return;
+        if(result === "Miss") {
+            playerTurn.classList = "";
+            playerTurn.textContent = `${player1Name.textContent}'s Turn`;
+            playerTurn.classList.add('player1');
+        }
+        if(result === "All ships have sunk") {
+            firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
+            secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
+        }
+
         player1Turn = true;
-    })
+    } 
+    firstPlayerBoardContainer.addEventListener('click', firstEventListener)
 }    
 
 
