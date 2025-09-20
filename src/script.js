@@ -77,11 +77,12 @@ class Gameboard {
             return "Miss";
         }
 
-        if(cell.isShipSunk()) {
+        if(this.board[x][y] = 'X') {
             if(this.allshipsSunk()) {
                 return "All ships have sunk";
             }
-            return "Ship sunk";
+            if(cell.isShipSunk()) return "Ship sunk";
+            return "Hit";
         }
     }
 

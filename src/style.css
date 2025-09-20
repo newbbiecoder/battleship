@@ -149,22 +149,19 @@ button.submit:hover {
   background: rgba(0, 255, 255, 0.3);
 }
 
-.cell {
-    .ship {
-        background: rgba(0, 255, 255, 0.6);
-        box-shadow: 0 0 15px cyan, inset 0 0 12px cyan;
-    }
-    
-    .miss {
-        background: rgba(0, 0, 0, 0.7);
-        border: 1px solid #444;
-        box-shadow: 0 0 5px #222 inset;
-    }
+.cell.ship {
+    background: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 15px cyan, inset 0 0 12px cyan;
+}
 
-    .hit {
-        background: red;
-        box-shadow: 0 0 20px red, inset 0 0 12px darkred;
-    }
+.cell.miss {
+    background-color: #e0e0e0;
+    border: 1px solid #bbb;
+}
+
+.cell.hit {
+    background: red;
+    box-shadow: 0 0 20px red, inset 0 0 12px darkred;
 }
 
 .gameBoards {

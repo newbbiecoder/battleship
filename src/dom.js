@@ -11,8 +11,8 @@ pvp.addEventListener('click', () => {
 
     const submit = document.querySelector('.submit');
 
-    submit.addEventListener('click', () => {
-        createBoards()
+    submit.addEventListener('click', () => {       
+        createBoards();
     })
 });
 
@@ -24,6 +24,7 @@ function createBoards() {
     container.appendChild(gameUpdates);
 
     const player1 = new script.Player(INPUTNAMES.player1.value);
+
 
     const player1Wrapper = document.createElement('div');
     player1Wrapper.classList.add('player1Wrapper');
@@ -39,7 +40,21 @@ function createBoards() {
     firstPlayerBoardContainer.classList.add('board');
     player1Wrapper.appendChild(firstPlayerBoardContainer);
 
+    placeShips(player1);
     renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
+
+    firstPlayerBoardContainer.addEventListener('click', (e) => {
+        if(!e.target.classList.contains('cell')) return;
+
+        let x = e.target.dataset.x;
+        let y = e.target.dataset.y;
+
+        let result = player2.attack(player1, [x,y]);
+        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
+
+        console.log("Player 1", result);
+        return result;
+    })
 
     const player2 = new script.Player(INPUTNAMES.player2.value);
 
@@ -62,6 +77,32 @@ function createBoards() {
     container.appendChild(gameBoards);
     gameBoards.appendChild(player1Wrapper);
     gameBoards.appendChild(player2Wrapper);
+    
+    placeShips(player2);
 
     renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
+
+
+    secondPlayerBoardContainer.addEventListener('click', (e) => {
+        if(!e.target.classList.contains("cell")) return;
+
+        const x = Number(e.target.dataset.x);
+        const y = Number(e.target.dataset.y);
+
+        const result = player1.attack(player2, [x,y]);
+        renderBoard(player2.gameboard.showBoard(), document.getElementById('secondPlayerBoard'));
+
+        console.log("Player 2", result);
+        return result;
+    })
+
+
+}
+
+
+function placeShips(player) {
+    player.gameboard.placeShip(4, [[1,2], [1,5]]);
+    player.gameboard.placeShip(1, [4,4]);
+    player.gameboard.placeShip(5, [[8,4], [8,8]]);
+    player.gameboard.placeShip(3, [[0,0], [2,0]]);
 }
