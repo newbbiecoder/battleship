@@ -13,7 +13,6 @@ function createBoards() {
 
     const player1 = new script.Player(INPUTNAMES.player1.value);
 
-
     const player1Wrapper = document.createElement('div');
     player1Wrapper.classList.add('player1Wrapper');
     container.appendChild(player1Wrapper)
@@ -28,21 +27,11 @@ function createBoards() {
     firstPlayerBoardContainer.classList.add('board');
     player1Wrapper.appendChild(firstPlayerBoardContainer);
 
+    // Place player1 ships
     placeShips(player1);
+
+    // Display ships on board
     renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
-
-    firstPlayerBoardContainer.addEventListener('click', (e) => {
-        if(!e.target.classList.contains('cell')) return;
-
-        let x = e.target.dataset.x;
-        let y = e.target.dataset.y;
-
-        let result = player2.attack(player1, [x,y]);
-        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
-
-        console.log("Player 1", result);
-        return result;
-    })
 
     const player2 = new script.Player(INPUTNAMES.player2.value);
 
@@ -66,13 +55,35 @@ function createBoards() {
     gameBoards.appendChild(player1Wrapper);
     gameBoards.appendChild(player2Wrapper);
     
+    // Place player2 ships
     placeShips(player2);
 
+    // Display the ships on board
     renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
 
+    // Event Listeners for both boards
+    boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer);
+
+}
+
+function boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer) {
+    firstPlayerBoardContainer.addEventListener('click', (e) => {
+        if(!e.target.classList.contains('cell')) return;
+        if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
+
+        let x = e.target.dataset.x;
+        let y = e.target.dataset.y;
+
+        let result = player2.attack(player1, [x,y]);
+        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
+
+        console.log("Player 1", result);
+        return result;
+    })
 
     secondPlayerBoardContainer.addEventListener('click', (e) => {
         if(!e.target.classList.contains("cell")) return;
+        if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
 
         const x = Number(e.target.dataset.x);
         const y = Number(e.target.dataset.y);
@@ -83,8 +94,6 @@ function createBoards() {
         console.log("Player 2", result);
         return result;
     })
-
-
 }
 
 
