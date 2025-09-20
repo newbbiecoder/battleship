@@ -177,3 +177,62 @@ button.submit:hover {
     font-size: 30px;
     font-family: Orbitron;
 }
+
+.gameUpdates {
+    font-family: Orbitron;
+    font-weight: bold;
+    font-size: 40px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.gameUpdates.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.gameUpdates.hit {
+    background: linear-gradient(135deg, #f68e8e, #f34040);
+    color: white;
+    border: 2px solid #ff9999;
+}
+
+
+.gameUpdates.miss {
+    background: linear-gradient(135deg, #576f83, #067ff9);
+    color: white;
+    border: 2px solid #90caf9;
+}
+
+
+.gameUpdates.shipSunk {
+    background: linear-gradient(135deg, #c8b697, #ea7d29);
+    color: white;
+    border: 2px solid #ffcc80;
+    animation: pulse 1s infinite alternate;
+}
+
+
+.gameUpdates.gameover {
+    background: linear-gradient(135deg, #43a047, #1b5e20);
+    color: #fff;
+    border: 2px solid #a5d6a7;
+    font-size: 1.6rem;
+    animation: shake 0.6s ease-in-out 2;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}

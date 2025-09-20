@@ -66,35 +66,47 @@ function createBoards() {
 
 }
 
+
+let player1Turn = true;
+
 function boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer) {
-    firstPlayerBoardContainer.addEventListener('click', (e) => {
-        if(!e.target.classList.contains('cell')) return;
-        if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
-
-        let x = e.target.dataset.x;
-        let y = e.target.dataset.y;
-
-        let result = player2.attack(player1, [x,y]);
-        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
-
-        console.log("Player 1", result);
-        return result;
-    })
+    const gameUpdates = document.querySelector('.gameUpdates');
 
     secondPlayerBoardContainer.addEventListener('click', (e) => {
+        if(!player1Turn) return;
+        if(!e.target.classList.contains("cell")) return;
+        if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
+
+        const x = Number(e.target.dataset.x);
+        const y = Number(e.target.dataset.y);
+        
+        const result = player1.attack(player2, [x,y]);
+        renderBoard(player2.gameboard.showBoard(), document.getElementById('secondPlayerBoard'));
+        console.log("Player 2", result);
+        
+        updateGameMessage(gameUpdates, result);
+        
+        player1Turn = false;
+    })
+        
+    firstPlayerBoardContainer.addEventListener('click', (e) => {
+        if(player1Turn) return;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
 
         const x = Number(e.target.dataset.x);
         const y = Number(e.target.dataset.y);
 
-        const result = player1.attack(player2, [x,y]);
-        renderBoard(player2.gameboard.showBoard(), document.getElementById('secondPlayerBoard'));
+        let result = player2.attack(player1, [x,y]);
+        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
+        console.log("Player 1", result);
 
-        console.log("Player 2", result);
-        return result;
+        updateGameMessage(gameUpdates, result);
+
+        player1Turn = true;
     })
-}
+}    
+
 
 
 function placeShips(player) {
@@ -103,5 +115,31 @@ function placeShips(player) {
     player.gameboard.placeShip(5, [[8,4], [8,8]]);
     player.gameboard.placeShip(3, [[0,0], [2,0]]);
 }
+
+function updateGameMessage(gameUpdates, type) {
+    gameUpdates.classList = "";
+    gameUpdates.classList = "gameUpdates show";
+
+    switch(type) {
+        case "Hit":
+            gameUpdates.classList.add("hit");
+            gameUpdates.textContent = "💥 HIT!";
+            break;
+        case "Miss":
+            gameUpdates.classList.add("miss");
+            gameUpdates.textContent = "🌊 MISS!";
+            break;
+        case "Ship sunk":
+            gameUpdates.classList.add("shipSunk");
+            gameUpdates.textContent = "🚢 SHIP SUNK!";
+            break;
+        case "All ships have sunk":
+            gameUpdates.classList.add("gameover");
+            gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER!";
+            break;
+    }
+}
+
+
 
 export {createBoards}
