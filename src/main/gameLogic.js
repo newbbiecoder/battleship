@@ -3,6 +3,7 @@ import { renderBoard } from "./playerVSplayer.js";
 import script from "../script.js";
 
 const container = document.querySelector('.container');
+let players = {};
 
 function createBoards() {
     container.innerHTML = "";
@@ -19,7 +20,6 @@ function createBoards() {
 
     const player1Wrapper = document.createElement('div');
     player1Wrapper.classList.add('player1Wrapper');
-    container.appendChild(player1Wrapper)
 
     const player1Name = document.createElement('p');
     player1Name.classList.add('player1Name');
@@ -30,18 +30,13 @@ function createBoards() {
     firstPlayerBoardContainer.id = "firstPlayerBoard"
     firstPlayerBoardContainer.classList.add('board');
     player1Wrapper.appendChild(firstPlayerBoardContainer);
-
-    // Place player1 ships
-    placeShips(player1);
-
+ 
     // Display ships on board
     renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
-
     const player2 = new script.Player(INPUTNAMES.player2.value);
 
     const player2Wrapper = document.createElement('div');
     player2Wrapper.classList.add('player2Wrapper');
-    container.appendChild(player2Wrapper);
 
     const player2Name = document.createElement('p');
     player2Name.classList.add('player2Name');
@@ -55,12 +50,12 @@ function createBoards() {
 
     const gameBoards = document.createElement('div');
     gameBoards.classList.add('gameBoards');
-    container.appendChild(gameBoards);
     gameBoards.appendChild(player1Wrapper);
     gameBoards.appendChild(player2Wrapper);
+    container.appendChild(gameBoards);
     
-    // Place player2 ships
-    placeShips(player2);
+    // Place player1 ships
+    placeShipsOnBoard(player1);
 
     // Display the ships on board
     renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
@@ -68,6 +63,131 @@ function createBoards() {
     // Event Listeners for both boards
     boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer);
 
+    players = {player1, player2};
+    return players;
+}
+
+function placeShipsOnBoard(player) {
+    const gameBoards = document.querySelector('.gameBoards');
+
+    let player1Name = document.querySelector('.player1Name');
+    let player2Name = document.querySelector('.player2Name');
+
+    const dockerContainer = document.createElement('div');
+    dockerContainer.classList.add('dockerContainer');
+    gameBoards.appendChild(dockerContainer);
+
+    const info = document.createElement('div');
+    info.classList.add('info');
+    dockerContainer.appendChild(info);
+
+    const rotateButton = document.createElement('button');
+    rotateButton.classList.add('rotate');
+    dockerContainer.appendChild(rotateButton);
+    rotateButton.textContent = "↻"
+
+    if(player.name === player1Name.textContent) {
+        dockerContainer.classList.add('player1Docker');
+        info.textContent = "Place all of your ships on the board to start the game !";
+    }
+
+    const docker = document.createElement('div');
+    docker.classList.add('docker');
+    dockerContainer.appendChild(docker);
+    
+    const userButtons = document.createElement('div');
+    userButtons.classList.add('userButtons');
+    dockerContainer.appendChild(userButtons);
+
+    const backButton = document.createElement('div');
+    backButton.classList.add('backButton');
+    userButtons.appendChild(backButton);
+
+    const continueButton = document.createElement('div');
+    continueButton.classList.add('continueButton');
+    userButtons.appendChild(continueButton);
+
+    // dragStartHandler
+    function dragstartHandler(ev) {
+        ev.dataTransfer.setData("shipId", ev.target.id);
+    }
+
+    // 5 SHIPS
+
+    // Carrier
+    const carrier = document.createElement('div');
+    carrier.id = 'carrier';
+    carrier.setAttribute('draggable', true);
+    carrier.addEventListener("dragstart", dragstartHandler);
+    carrier.dataset.length = "5";
+    docker.appendChild(carrier);
+
+    for(let i = 0; i < 5; i++) {
+        const cell1 = document.createElement('div');
+        cell1.classList.add('cell');
+        cell1.classList.add('removeHover');
+        carrier.appendChild(cell1);
+    }
+
+    // Battleship
+    const battleship = document.createElement('div');
+    battleship.id = 'battleship';
+    battleship.setAttribute('draggable', true);
+    battleship.addEventListener('dragstart', dragstartHandler);
+    battleship.dataset.length = "4";
+    docker.appendChild(battleship);
+
+    for(let i = 0; i < 4; i++) {
+        const cell2 = document.createElement('div');
+        cell2.classList.add('cell');
+        cell2.classList.add('removeHover');
+        battleship.appendChild(cell2);
+    }
+
+    // Cruiser
+    const cruiser = document.createElement('div');
+    cruiser.id = 'cruiser';
+    cruiser.setAttribute('draggable', true);
+    cruiser.addEventListener('dragstart', dragstartHandler);
+    cruiser.dataset.length = "3";
+    docker.appendChild(cruiser);
+
+    for(let i = 0; i < 3; i++) {
+        const cell3 = document.createElement('div');
+        cell3.classList.add('cell');
+        cell3.classList.add('removeHover');
+        cruiser.appendChild(cell3);
+    }
+
+    // Submarine
+    const submarine = document.createElement('div');
+    submarine.id = 'submarine';
+    submarine.setAttribute('draggable', true);
+    submarine.addEventListener('dragstart', dragstartHandler);
+    submarine.dataset.length = "3";
+    docker.appendChild(submarine);
+
+    for(let i = 0; i < 3; i++) {
+        const cell4 = document.createElement('div');
+        cell4.classList.add('cell');
+        cell4.classList.add('removeHover');
+        submarine.appendChild(cell4);
+    }
+
+    // Destroyer
+    const destroyer = document.createElement('div');
+    destroyer.id = 'destroyer';
+    destroyer.setAttribute('draggable', true);
+    destroyer.addEventListener('dragstart', dragstartHandler);
+    destroyer.dataset.length = "2";
+    docker.appendChild(destroyer);
+
+    for(let i = 0; i < 2; i++) {
+        const cell5 = document.createElement('div');
+        cell5.classList.add('cell');
+        cell5.classList.add('removeHover');
+        destroyer.appendChild(cell5);
+    }
 }
 
 
@@ -145,14 +265,6 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 }    
 
 
-
-function placeShips(player) {
-    player.gameboard.placeShip(4, [[1,2], [1,5]]);
-    player.gameboard.placeShip(1, [4,4]);
-    player.gameboard.placeShip(5, [[8,4], [8,8]]);
-    player.gameboard.placeShip(3, [[0,0], [2,0]]);
-}
-
 function updateGameMessage(gameUpdates, type) {
     gameUpdates.classList = "";
     gameUpdates.classList = "gameUpdates show";
@@ -177,6 +289,4 @@ function updateGameMessage(gameUpdates, type) {
     }
 }
 
-
-
-export {createBoards}
+export {createBoards, players}
