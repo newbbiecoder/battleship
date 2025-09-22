@@ -51,18 +51,20 @@ class Gameboard {
 
             if(x1 === x2) { // Vertical
                 if(y1 > 9 || y2 > 9) return "Invalid coord";
-                for(;y1 <= y2; y1++) {
-                    if(this.board[x1][y1]) return "Already a ship present";
-                    this.board[x1][y1] = ship;
-                }
+                if(this.checkShipAlreadyPresent(y1,y2,x1) === false) return "Already a ship present";
+                for(;y1 <= y2; y1++) this.board[x1][y1] = ship;
             }
             else if(y1 === y2){ // Horizontal
                 if(x1 > 9 || x2 > 9) return "Invalid coord";
-                for(;x1 <= x2; x1++) {
-                    if(this.board[x1][y1]) return "Already a ship present";
-                    this.board[x1][y1] = ship;
-                }
+                if(this.checkShipAlreadyPresent(x1,x2,y1) === false) return "Already a ship present";
+                for(;x1 <= x2; x1++) this.board[x1][y1] = ship;
             }
+        }
+    }
+
+    checkShipAlreadyPresent(a1,a2, b1, ship) {
+        for(;a1 <= a2; a1++) {
+            if(this.board[a1][b1]) return false;
         }
     }
 

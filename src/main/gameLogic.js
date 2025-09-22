@@ -86,6 +86,8 @@ function placeShipsOnBoard(player) {
     dockerContainer.appendChild(rotateButton);
     rotateButton.textContent = "↻"
 
+    
+
     if(player.name === player1Name.textContent) {
         dockerContainer.classList.add('player1Docker');
         info.textContent = "Place all of your ships on the board to start the game !";
@@ -188,6 +190,30 @@ function placeShipsOnBoard(player) {
         cell5.classList.add('removeHover');
         destroyer.appendChild(cell5);
     }
+
+    let isRotated = false;
+    rotateButton.addEventListener('click', () => {
+        if(!isRotated) {
+            carrier.classList.add('column');
+            battleship.classList.add('column');
+            cruiser.classList.add('column');
+            submarine.classList.add('column');
+            destroyer.classList.add('column');
+            docker.classList.add('autoFlowColumn');
+            docker.style.gridTemplateRows = 'none';
+            isRotated = true;
+            return;
+        }
+        carrier.classList.remove('column');
+        battleship.classList.remove('column');
+        cruiser.classList.remove('column');
+        submarine.classList.remove('column');
+        destroyer.classList.remove('column');
+        docker.classList.remove('autoFlowColumn');
+        docker.setAttribute('grid-template-row', 'repeat(5, 1fr)');
+        isRotated = false;
+        return;
+    })
 }
 
 

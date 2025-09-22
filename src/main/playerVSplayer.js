@@ -1,6 +1,8 @@
 import script from "../script.js";
 import { players } from "./gameLogic.js";
 
+let success;
+
 // dragOverHandler
 function dragoverHandler(ev) {
     ev.preventDefault();
@@ -8,6 +10,7 @@ function dragoverHandler(ev) {
 
 // dropHandler
 function dropHandler(ev) {
+    const docker = document.querySelector('.docker');
     ev.preventDefault();
     const {player1} = players;
     const shipId = ev.dataTransfer.getData("shipId");
@@ -20,7 +23,9 @@ function dropHandler(ev) {
 
     const selectInfo = document.querySelector('.info');
     
-    const success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+    if(docker.classList.contains('autoFlowColumn')) success = player1.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
+    else success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+    console.log(success);
         if(success === "Invalid coord") {
             selectInfo.classList.add('error');
             selectInfo.textContent = "Invalid Placement";

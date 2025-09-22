@@ -331,7 +331,7 @@ button.submit:hover {
 }
 
 .docker{
-    height: 20vh;
+    height: 100%;
     width: 81vh;
     display: grid;
     grid-template-rows: repeat(5, 1fr);
@@ -366,8 +366,9 @@ button.submit:hover {
     color: #f8fafc;
     border: 2px solid #334155;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -406,4 +407,15 @@ button.submit:hover {
     0%   { opacity: 1; }
     50%  { opacity: 0.7; }
     100% { opacity: 1; }
+}
+
+.autoFlowColumn {
+    grid-template-columns: repeat(5, 6.5rem);
+    justify-content: center;
+    align-items: center;
+    gap: 0em;
+}
+
+.column {
+    flex-direction: column;
 }
