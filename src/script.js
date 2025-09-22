@@ -42,7 +42,7 @@ class Gameboard {
         if(length === 1) {
             let [x,y] = coordinates;
 
-            if(this.board[x][y]) throw new Error("Already a ship present");
+            if(this.board[x][y]) return "Already a ship present";
             this.board[x][y] = ship;
         }
         else {
@@ -50,14 +50,16 @@ class Gameboard {
             let [x2,y2] = coordinates[1];
 
             if(x1 === x2) { // Vertical
+                if(y1 > 9 || y2 > 9) return "Invalid coord";
                 for(;y1 <= y2; y1++) {
-                    if(this.board[x1][y1]) throw new Error('Already a ship present');
+                    if(this.board[x1][y1]) return "Already a ship present";
                     this.board[x1][y1] = ship;
                 }
             }
             else if(y1 === y2){ // Horizontal
+                if(x1 > 9 || x2 > 9) return "Invalid coord";
                 for(;x1 <= x2; x1++) {
-                    if(this.board[x1][y1]) throw new Error('Already a ship present');
+                    if(this.board[x1][y1]) return "Already a ship present";
                     this.board[x1][y1] = ship;
                 }
             }

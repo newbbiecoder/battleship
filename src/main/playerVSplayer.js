@@ -18,15 +18,29 @@ function dropHandler(ev) {
 
     const length = parseInt(shipEl.dataset.length);
 
+    const selectInfo = document.querySelector('.info');
+    
     const success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+        if(success === "Invalid coord") {
+            selectInfo.classList.add('error');
+            selectInfo.textContent = "Invalid Placement";
+            return;
+        }
 
-    if(success !== false) {
-        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
-        shipEl.setAttribute('draggable', false);
-        shipEl.style.opacity = "0.5";
-    } else {
-        throw new Error("INVALID PLACEMENT");
-    }
+        if(success === "Already a ship present") {
+            selectInfo.classList.add('error');
+            selectInfo.textContent = "Already a ship present";
+            return;
+        }
+
+        if(success !== false) {
+            selectInfo.classList.remove('error');
+            selectInfo.textContent = "Place all of your ships on the board to start the game !"
+            renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
+            shipEl.setAttribute('draggable', false);
+            shipEl.style.opacity = "0.5";
+            
+        }
 }
 
 function renderBoard(board, boardContainer) {
