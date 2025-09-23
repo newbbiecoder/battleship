@@ -78,7 +78,7 @@ function renderBoard(board, boardContainer) {
             let cell = document.createElement('div');
             cell.classList.add('cell');
             cell.addEventListener("dragover", dragoverHandler)
-            cell.addEventListener("drop", dropHandler);
+            cell.addEventListener("drop", dropHandler);           
 
             cell.dataset.x = i;
             cell.dataset.y = j;
@@ -88,6 +88,8 @@ function renderBoard(board, boardContainer) {
             if(value === "X") cell.classList.add('hit');
             else if(value === ".") cell.classList.add('miss');
             else if(value instanceof script.Ship) cell.classList.add('ship');
+
+            if(!document.querySelector('.dockerContainer') && (!cell.classList.contains('hit') && !cell.classList.contains('miss'))) cell.classList.add('hide');
 
             row.appendChild(cell);
         }

@@ -252,17 +252,13 @@ function buttonEventListener() {
 
             continueButton.textContent = "Submit";
             continueButton.addEventListener('click', () => {
+                const selectCells = document.querySelectorAll('.board > div > .cell');
+                selectCells.forEach((cell) => cell.classList.add('hide'));
                 document.querySelector('.dockerContainer').remove();
-                document.querySelector('.cell').removeEventListener("dragover", dragoverHandler)
-            })
+            })  
         }
     })
 }
-
-function dragoverHandler(ev) {
-    ev.preventDefault();
-}
-
 
 let player1Turn = true;
 
@@ -275,15 +271,12 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 
     playerTurn.textContent = `${player1Name.textContent}'s Turn`
     playerTurn.classList.add('player1');
-
-    const dockerContainer = document.querySelector('.dockerContainer');
     
     function secondEventListener(e) {
         if(!player1Turn) return;
         playerTurn.textContent = `${player1Name.textContent}'s Turn`;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
-        if(dockerContainer.classList.contains('player2Docker')) return;
 
         const x = Number(e.target.dataset.x);
         const y = Number(e.target.dataset.y);
@@ -297,6 +290,7 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
         if(result === "Hit" || result === "Ship sunk") return;
         if(result === "Miss") {
             playerTurn.classList = "";
+            playerTurn.classList.add('hide');
             playerTurn.classList.add("player2");
             playerTurn.textContent = `${player2Name.textContent}'s Turn`;
         }
@@ -328,6 +322,7 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
         if(result === "Miss") {
             playerTurn.classList = "";
             playerTurn.textContent = `${player1Name.textContent}'s Turn`;
+            playerTurn.classList.add('hide');
             playerTurn.classList.add('player1');
         }
         if(result === "All ships have sunk") {
