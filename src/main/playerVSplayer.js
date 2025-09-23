@@ -11,8 +11,12 @@ function dragoverHandler(ev) {
 // dropHandler
 function dropHandler(ev) {
     const docker = document.querySelector('.docker');
+    const dockerContainer = document.querySelector('.dockerContainer');
+
     ev.preventDefault();
     const {player1} = players;
+    const {player2} = players;
+
     const shipId = ev.dataTransfer.getData("shipId");
     const shipEl = document.getElementById(shipId);
 
@@ -23,29 +27,44 @@ function dropHandler(ev) {
 
     const selectInfo = document.querySelector('.info');
     
-    if(docker.classList.contains('autoFlowColumn')) success = player1.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
-    else success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
-    console.log(success);
-        if(success === "Invalid coord") {
-            selectInfo.classList.add('error');
-            selectInfo.textContent = "Invalid Placement";
-            return;
-        }
+    if(dockerContainer.classList.contains('player1Docker')) {
+        if(docker.classList.contains('autoFlowColumn')) success = player1.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
+        else success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+    }
+    else if(dockerContainer.classList.contains('player2Docker')) {
+        console.log("REACHED?");
+        if(docker.classList.contains('autoFlowColumn')) success = player2.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
+        else success = player2.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+    }
 
-        if(success === "Already a ship present") {
-            selectInfo.classList.add('error');
-            selectInfo.textContent = "Already a ship present";
-            return;
-        }
+    
+    if(success === "Invalid coord") {
+        selectInfo.classList.add('error');
+        selectInfo.textContent = "Invalid Placement";
+        return;
+    }
 
-        if(success !== false) {
-            selectInfo.classList.remove('error');
-            selectInfo.textContent = "Place all of your ships on the board to start the game !"
-            renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
-            shipEl.setAttribute('draggable', false);
-            shipEl.style.opacity = "0.5";
-            
-        }
+    if(success === "Already a ship present") {
+        selectInfo.classList.add('error');
+        selectInfo.textContent = "Already a ship present";
+        return;
+    }
+
+    if(success !== false && dockerContainer.classList.contains('player1Docker')) {
+        selectInfo.classList.remove('error');
+        selectInfo.textContent = "Place all of your ships on the board to start the game !"
+        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
+        shipEl.setAttribute('draggable', false);
+        shipEl.style.opacity = "0.5";
+    }
+    else if(success !== false && dockerContainer.classList.contains('player2Docker')) {
+        console.log("AGAIN HEHEHE");
+        selectInfo.classList.remove('error');
+        selectInfo.textContent = "Place all of your ships on the board to start the game !";
+        renderBoard(player2.gameboard.showBoard(), document.getElementById('secondPlayerBoard'));
+        shipEl.setAttribute('draggable', false);
+        shipEl.style.opacity = "0.5";
+    }
 }
 
 function renderBoard(board, boardContainer) {

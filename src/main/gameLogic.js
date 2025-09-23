@@ -15,24 +15,7 @@ function createBoards() {
     const gameUpdates = document.createElement('div');
     gameUpdates.classList.add('gameUpdates');
     container.appendChild(gameUpdates);
-
-    const player1 = new script.Player(INPUTNAMES.player1.value);
-
-    const player1Wrapper = document.createElement('div');
-    player1Wrapper.classList.add('player1Wrapper');
-
-    const player1Name = document.createElement('p');
-    player1Name.classList.add('player1Name');
-    player1Name.textContent = `${INPUTNAMES.player1.value}`;
-    player1Wrapper.appendChild(player1Name);
-
-    const firstPlayerBoardContainer = document.createElement('div');
-    firstPlayerBoardContainer.id = "firstPlayerBoard"
-    firstPlayerBoardContainer.classList.add('board');
-    player1Wrapper.appendChild(firstPlayerBoardContainer);
- 
-    // Display ships on board
-    renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
+    
     const player2 = new script.Player(INPUTNAMES.player2.value);
 
     const player2Wrapper = document.createElement('div');
@@ -48,21 +31,36 @@ function createBoards() {
     secondPlayerBoardContainer.classList.add("board");
     player2Wrapper.appendChild(secondPlayerBoardContainer);
 
+    
+    const player1 = new script.Player(INPUTNAMES.player1.value);
+
+    const player1Wrapper = document.createElement('div');
+    player1Wrapper.classList.add('player1Wrapper');
+
+    const player1Name = document.createElement('p');
+    player1Name.classList.add('player1Name');
+    player1Name.textContent = `${INPUTNAMES.player1.value}`;
+    player1Wrapper.appendChild(player1Name);
+
+    const firstPlayerBoardContainer = document.createElement('div');
+    firstPlayerBoardContainer.id = "firstPlayerBoard"
+    firstPlayerBoardContainer.classList.add('board');
+    player1Wrapper.appendChild(firstPlayerBoardContainer);
+
     const gameBoards = document.createElement('div');
-    gameBoards.classList.add('gameBoards');
+    gameBoards.classList.add('gameBoards'); 
     gameBoards.appendChild(player1Wrapper);
     gameBoards.appendChild(player2Wrapper);
     container.appendChild(gameBoards);
-    
+
+    renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
+    renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
     // Place player1 ships
     placeShipsOnBoard(player1);
-
-    // Display the ships on board
-    renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
-
+    
     // Event Listeners for both boards
     boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer);
-
+    
     players = {player1, player2};
     return players;
 }
@@ -86,28 +84,21 @@ function placeShipsOnBoard(player) {
     dockerContainer.appendChild(rotateButton);
     rotateButton.textContent = "↻"
 
-    
-
     if(player.name === player1Name.textContent) {
         dockerContainer.classList.add('player1Docker');
         info.textContent = "Place all of your ships on the board to start the game !";
     }
 
+
     const docker = document.createElement('div');
     docker.classList.add('docker');
     dockerContainer.appendChild(docker);
     
-    const userButtons = document.createElement('div');
-    userButtons.classList.add('userButtons');
-    dockerContainer.appendChild(userButtons);
-
-    const backButton = document.createElement('div');
-    backButton.classList.add('backButton');
-    userButtons.appendChild(backButton);
-
+    // Continue Button
     const continueButton = document.createElement('div');
     continueButton.classList.add('continueButton');
-    userButtons.appendChild(continueButton);
+    continueButton.textContent = "Continue";
+    dockerContainer.appendChild(continueButton);
 
     // dragStartHandler
     function dragstartHandler(ev) {
@@ -191,7 +182,20 @@ function placeShipsOnBoard(player) {
         destroyer.appendChild(cell5);
     }
 
-    let isRotated = false;
+    buttonEventListener();
+}
+let isRotated = false;
+
+function buttonEventListener() {
+    const docker = document.querySelector('.docker');
+    const rotateButton = document.querySelector('.rotate');
+
+    const carrier = document.getElementById('carrier');
+    const battleship = document.getElementById('battleship');
+    const cruiser = document.getElementById('cruiser');
+    const submarine = document.getElementById('submarine');
+    const destroyer = document.getElementById('destroyer');
+    
     rotateButton.addEventListener('click', () => {
         if(!isRotated) {
             carrier.classList.add('column');
@@ -214,6 +218,49 @@ function placeShipsOnBoard(player) {
         isRotated = false;
         return;
     })
+
+    const continueButton = document.querySelector('.continueButton');
+    const info = document.querySelector('.info');
+
+    continueButton.addEventListener('click', () => {
+        if(carrier.draggable || battleship.draggable ||
+            cruiser.draggable || submarine.draggable ||
+            destroyer.draggable
+        ) {  
+            info.classList.add('error');
+            info.textContent = "Place all of the ships first";
+        }
+        else {
+
+            document.querySelector('.dockerContainer').classList.remove('player1Docker');
+            document.querySelector('.dockerContainer').classList.add('player2Docker');
+
+            document.getElementById('carrier').setAttribute('draggable', true);
+            document.getElementById('carrier').style = "";
+
+            document.getElementById('battleship').setAttribute('draggable', true);
+            document.getElementById('battleship').style = "";
+
+            document.getElementById('cruiser').setAttribute('draggable', true);
+            document.getElementById('cruiser').style = "";
+
+            document.getElementById('submarine').setAttribute('draggable', true);
+            document.getElementById('submarine').style = "";
+
+            document.getElementById('destroyer').setAttribute('draggable', true);
+            document.getElementById('destroyer').style = ""
+
+            continueButton.textContent = "Submit";
+            continueButton.addEventListener('click', () => {
+                document.querySelector('.dockerContainer').remove();
+                document.querySelector('.cell').removeEventListener("dragover", dragoverHandler)
+            })
+        }
+    })
+}
+
+function dragoverHandler(ev) {
+    ev.preventDefault();
 }
 
 
@@ -228,12 +275,15 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 
     playerTurn.textContent = `${player1Name.textContent}'s Turn`
     playerTurn.classList.add('player1');
+
+    const dockerContainer = document.querySelector('.dockerContainer');
     
     function secondEventListener(e) {
         if(!player1Turn) return;
         playerTurn.textContent = `${player1Name.textContent}'s Turn`;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
+        if(dockerContainer.classList.contains('player2Docker')) return;
 
         const x = Number(e.target.dataset.x);
         const y = Number(e.target.dataset.y);
@@ -257,7 +307,7 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
         player1Turn = false;
     }
 
-    secondPlayerBoardContainer.addEventListener('click', secondEventListener)
+    secondPlayerBoardContainer.addEventListener('click', secondEventListener);
         
     function firstEventListener(e) {
         if(player1Turn) return;
@@ -287,7 +337,7 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 
         player1Turn = true;
     } 
-    firstPlayerBoardContainer.addEventListener('click', firstEventListener)
+    firstPlayerBoardContainer.addEventListener('click', firstEventListener);
 }    
 
 

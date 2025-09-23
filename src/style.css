@@ -330,6 +330,14 @@ button.submit:hover {
     align-items: center;
 }
 
+.player2Docker {
+    bottom: 5%;
+    left: 13%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .docker{
     height: 100%;
     width: 81vh;
@@ -418,4 +426,33 @@ button.submit:hover {
 
 .column {
     flex-direction: column;
+}
+
+.continueButton, .submitButton {
+    background: #0d0d0d;
+    color: #00f5d4;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: 2px solid #00f5d4;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    text-shadow: 0 0 8px rgba(0, 245, 212, 0.8);
+    box-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
+}
+
+.continueButton:hover {
+    background: #00f5d4;
+    color: #0d0d0d;
+    text-shadow: 0 0 10px #000;
+    box-shadow: 0 0 20px rgba(0, 245, 212, 1);
+    transform: scale(1.05);
+}
+
+.continueButton:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 15px rgba(0, 245, 212, 0.7);
 }
