@@ -65,11 +65,64 @@ function createBoards() {
     return players;
 }
 
+// function addShipPreviewListeners(boardContainer, player) {
+//     const cells = boardContainer.querySelectorAll('.cell');
+
+//     cells.forEach((cell) => {
+//         cell.addEventListener('dragover', (e) => {
+//             e.preventDefault();
+
+            
+//             console.log(e.target);
+//             const length = Number(shipEl.dataset.length);
+//             const x = Number(cell.dataset.x);
+//             const y = Number(cell.dataset.y);
+
+//             console.log(`length ${length}`);
+//             console.log(`x : ${x}`);
+//             console.log(`y : ${y}`);
+
+//             const docker = document.querySelector('.docker');
+//             const vertical = docker.classList.contains('autoFlowColumn');
+//             let coords = []
+
+//             if(vertical) {
+//                 for(let i = 0; i < length; i++) coords.push([x, y + i]);
+//             }
+//             else {
+//                 for(let i = 0; i < length; i++) coords.push([x + i, y]);
+//             }
+
+//             // Check if valid
+
+//             let valid = coords.every(([cx, cy]) => cx < 10 && cy < 10 && player.gameboard.board[cx][cy] === null);
+
+//             coords.forEach(([cx, cy]) => {
+//                 const target = boardContainer.querySelector(`[data-x="${cx}"][data-y="${cy}"]`);
+//                 if(target) {
+//                     target.classList.add(valid ? "ship-preview" : "ship-preview-invalid");
+//                 }
+//             })
+//         })
+
+//         cell.addEventListener('dragleave', () => {
+//             boardContainer.querySelectorAll('.ship-preview, .ship-preview-invalid').forEach(
+//                 c => c.classList.remove('ship-preview', 'ship-preview-invalid')
+//             );
+//         })
+
+//         cell.addEventListener('drop', () => {
+//             boardContainer.querySelectorAll('.ship-preview', '.ship-preview-invalid').forEach(
+//                 c => c.classList.remove('ship-preview', 'ship-preview-invalid')
+//             );
+//         })
+//     })
+// }
+
 function placeShipsOnBoard(player) {
     const gameBoards = document.querySelector('.gameBoards');
 
     let player1Name = document.querySelector('.player1Name');
-    let player2Name = document.querySelector('.player2Name');
 
     const dockerContainer = document.createElement('div');
     dockerContainer.classList.add('dockerContainer');
@@ -183,6 +236,7 @@ function placeShipsOnBoard(player) {
     }
 
     buttonEventListener();
+    // addShipPreviewListeners(document.getElementById(player.name === INPUTNAMES.player1.value ? "firstPlayerBoard" : "secondPlayerBoard"), player);
 }
 let isRotated = false;
 
@@ -250,8 +304,22 @@ function buttonEventListener() {
             document.getElementById('destroyer').setAttribute('draggable', true);
             document.getElementById('destroyer').style = ""
 
-            continueButton.textContent = "Submit";
-            continueButton.addEventListener('click', () => {
+            continueButton.remove();
+
+            const submitButton = document.createElement('button');
+            document.querySelector(".dockerContainer").appendChild(submitButton);
+            submitButton.classList.add('continueButton');
+            submitButton.textContent = "Submit";
+
+            submitButton.addEventListener('click', () => {
+                if(carrier.draggable || battleship.draggable ||
+                    cruiser.draggable || submarine.draggable ||
+                    destroyer.draggable
+                ) {  
+                    info.classList.add('error');
+                    info.textContent = "Place all of the ships first";
+                    return;
+                }
                 const selectCells = document.querySelectorAll('.board > div > .cell');
                 selectCells.forEach((cell) => cell.classList.add('hide'));
                 document.querySelector('.dockerContainer').remove();
@@ -356,6 +424,7 @@ function updateGameMessage(gameUpdates, type) {
         case "All ships have sunk":
             gameUpdates.classList.add("gameover");
             gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER!";
+            document.querySelector('.container > .hide').remove();
             break;
     }
 }

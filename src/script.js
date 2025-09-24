@@ -42,22 +42,28 @@ class Gameboard {
         if(length === 1) {
             let [x,y] = coordinates;
 
-            if(this.board[x][y]) return "Already a ship present";
+            if(this.board[x][y]) {
+                return "Already a ship present";
+            }
             this.board[x][y] = ship;
         }
         else {
-            let [x1,y1] = coordinates[0]
+            let [x1,y1] = coordinates[0];
             let [x2,y2] = coordinates[1];
 
             if(x1 === x2) { // Vertical
                 if(y1 > 9 || y2 > 9) return "Invalid coord";
                 if(this.checkShipAlreadyPresent(y1,y2,x1) === false) return "Already a ship present";
-                for(;y1 <= y2; y1++) this.board[x1][y1] = ship;
+                for(;y1 <= y2; y1++) {
+                    this.board[x1][y1] = ship;
+                }
             }
             else if(y1 === y2){ // Horizontal
                 if(x1 > 9 || x2 > 9) return "Invalid coord";
                 if(this.checkShipAlreadyPresent(x1,x2,y1) === false) return "Already a ship present";
-                for(;x1 <= x2; x1++) this.board[x1][y1] = ship;
+                for(;x1 <= x2; x1++) {
+                    this.board[x1][y1] = ship;
+                }
             }
         }
     }

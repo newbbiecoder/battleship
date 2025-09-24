@@ -14,14 +14,18 @@ function dropHandler(ev) {
     const dockerContainer = document.querySelector('.dockerContainer');
 
     ev.preventDefault();
+    
     const {player1} = players;
     const {player2} = players;
 
     const shipId = ev.dataTransfer.getData("shipId");
     const shipEl = document.getElementById(shipId);
-
+    
     const x = Number(ev.target.dataset.x);
     const y = Number(ev.target.dataset.y);
+
+    console.log(`x : ${x}`);
+    console.log(`y: ${y}`);
 
     const length = parseInt(shipEl.dataset.length);
 
@@ -32,7 +36,6 @@ function dropHandler(ev) {
         else success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
     }
     else if(dockerContainer.classList.contains('player2Docker')) {
-        console.log("REACHED?");
         if(docker.classList.contains('autoFlowColumn')) success = player2.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
         else success = player2.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
     }
