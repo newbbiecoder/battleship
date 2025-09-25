@@ -237,7 +237,7 @@ button.submit:hover {
     color: #fff;
     border: 2px solid #a5d6a7;
     font-size: 1.6rem;
-    padding: 11px;
+    padding: 6px;
     animation: shake 0.6s ease-in-out 2;
 }
 
@@ -471,4 +471,61 @@ button.submit:hover {
 .cell.preview-invalid {
   background-color: rgba(255,0,0,0.18);
   outline: 2px solid rgba(255,0,0,0.6);
+}
+
+.addPointer {
+    pointer-events: none;
+}
+
+.onLoadHeading {
+    font-family: Orbitron;
+    text-transform: uppercase;
+    font-size: 2rem;            
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #0ff,
+        0 0 80px #0ff,
+        0 0 90px #0ff,
+        0 0 100px #0ff,
+        0 0 150px #0ff;
+}
+
+.playerWon {
+  font-family: Orbitron;
+  font-size: 2rem;
+  text-transform: uppercase;
+  font-weight: 900;
+  text-align: center;
+  color: #f893f3; 
+  text-shadow:
+    0 0 5px #fc54f3,
+    0 0 10px #ff2af5,
+    0 0 20px #ff2af5,
+    0 0 40px #2af5ff,
+    0 0 80px #2af5ff;
+  animation: neonFlash 1.5s infinite alternate;
+}
+
+@keyframes neonFlash {
+  0% {
+    text-shadow:
+      0 0 5px #ff2af5,
+      0 0 10px #ff2af5,
+      0 0 20px #ff2af5,
+      0 0 40px #2af5ff,
+      0 0 80px #2af5ff;
+    transform: scale(1);
+  }
+  100% {
+    text-shadow:
+      0 0 10px #ff2af5,
+      0 0 20px #ff2af5,
+      0 0 40px #ff2af5,
+      0 0 80px #2af5ff,
+      0 0 120px #2af5ff;
+    transform: scale(1.05);
+  }
 }

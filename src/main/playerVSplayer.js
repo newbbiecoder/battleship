@@ -12,6 +12,7 @@ function dragoverHandler(ev) {
 function dropHandler(ev) {
     const docker = document.querySelector('.docker');
     const dockerContainer = document.querySelector('.dockerContainer');
+    document.getElementById('secondPlayerBoard').classList.add('addPointer');
 
     ev.preventDefault();
     
@@ -23,9 +24,12 @@ function dropHandler(ev) {
     
     const x = Number(ev.target.dataset.x);
     const y = Number(ev.target.dataset.y);
-
+    
+    
     console.log(`x : ${x}`);
     console.log(`y: ${y}`);
+    console.log(shipEl);
+    if(shipEl === null) return;
 
     const length = parseInt(shipEl.dataset.length);
 
@@ -34,10 +38,14 @@ function dropHandler(ev) {
     if(dockerContainer.classList.contains('player1Docker')) {
         if(docker.classList.contains('autoFlowColumn')) success = player1.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
         else success = player1.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+        console.log(success)
+        console.log(player1.gameboard.showBoard());
     }
     else if(dockerContainer.classList.contains('player2Docker')) {
         if(docker.classList.contains('autoFlowColumn')) success = player2.gameboard.placeShip(length, [[x,y], [x, y + length - 1]]);
         else success = player2.gameboard.placeShip(length, [[x,y], [x + length - 1, y]]);
+        console.log(success);
+        console.log(player2.gameboard.showBoard());
     }
 
     

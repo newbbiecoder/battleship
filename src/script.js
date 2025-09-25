@@ -39,34 +39,48 @@ class Gameboard {
     placeShip(length, coordinates) {
         const ship = new Ship(length);
 
-        if(length === 1) {
-            let [x,y] = coordinates;
+        if (length === 1) {
+            let [x, y] = coordinates;
 
-            if(this.board[x][y]) return "Already a ship present";
+            if (x < 0 || x > 9 || y < 0 || y > 9) return "Invalid coord";
+            if (this.board[x][y]) return "Already a ship present";
+
             this.board[x][y] = ship;
-        }
-        else {
-            let [x1,y1] = coordinates[0];
-            let [x2,y2] = coordinates[1];
+        } else {
+            
+            let [x1, y1] = coordinates[0];
+            let [x2, y2] = coordinates[1];
 
-            if(x1 === x2) { // Vertical
-                if(y1 > 9 || y2 > 9) return "Invalid coord";
-                if(this.checkShipAlreadyPresent(y1,y2,x1) === false) return "Already a ship present";
-                for(;y1 <= y2; y1++) this.board[x1][y1] = ship;
-            }
-            else if(y1 === y2){ // Horizontal
-                if(x1 > 9 || x2 > 9) return "Invalid coord";
-                if(this.checkShipAlreadyPresent(x1,x2,y1) === false) return "Already a ship present";
-                for(;x1 <= x2; x1++) this.board[x1][y1] = ship;
+            if (x1 === x2) { // Vertical
+                if (y1 > y2) [y1, y2] = [y2, y1];
+                if (y1 < 0 || y2 > 9) return "Invalid coord";
+
+                if (!this.checkShipAlreadyPresent(y1, y2, x1, false)) return "Already a ship present";
+
+                for (let y = y1; y <= y2; y++) this.board[x1][y] = ship;
+            } 
+            else if (y1 === y2) { // Horizontal
+                if (x1 > x2) [x1, x2] = [x2, x1];
+                if (x1 < 0 || x2 > 9) return "Invalid coord";
+
+                if (!this.checkShipAlreadyPresent(x1, x2, y1, true)) return "Already a ship present";
+                
+                for (let x = x1; x <= x2; x++) this.board[x][y1] = ship;
             }
         }
     }
 
-    checkShipAlreadyPresent(a1,a2, b1) {
-        for(;a1 <= a2; a1++) {
-            if(this.board[a1][b1]) return false;
+    checkShipAlreadyPresent(a1, a2, b1, horizontal) {
+        for (let i = a1; i <= a2; i++) {
+            if (horizontal) {
+                if (this.board[i][b1] !== null) return false;
+            } else {
+                if (this.board[b1][i] !== null) return false;
+            }
         }
+        return true;
     }
+
 
     recieveAttack(coordinates) {
         let [x,y] = coordinates;

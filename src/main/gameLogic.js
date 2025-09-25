@@ -8,8 +8,14 @@ let players = {};
 function createBoards() {
     container.innerHTML = "";
 
+    const onLoadHeading = document.createElement('div');
+    onLoadHeading.textContent = "Place all of the ships to start the game :)"
+    onLoadHeading.classList.add('onLoadHeading');
+    container.appendChild(onLoadHeading);
+
     const playerTurn = document.createElement('div');
     playerTurn.classList.add('playerTurn');
+    playerTurn.style.display = "none";
     container.appendChild(playerTurn);
     
     const gameUpdates = document.createElement('div');
@@ -56,6 +62,7 @@ function createBoards() {
     renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
     renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
     // Place player1 ships
+    
     placeShipsOnBoard(player1);
     
     // Event Listeners for both boards
@@ -65,61 +72,9 @@ function createBoards() {
     return players;
 }
 
-// function addShipPreviewListeners(boardContainer, player) {
-//     const cells = boardContainer.querySelectorAll('.cell');
-
-//     cells.forEach((cell) => {
-//         cell.addEventListener('dragover', (e) => {
-//             e.preventDefault();
-
-            
-//             console.log(e.target);
-//             const length = Number(shipEl.dataset.length);
-//             const x = Number(cell.dataset.x);
-//             const y = Number(cell.dataset.y);
-
-//             console.log(`length ${length}`);
-//             console.log(`x : ${x}`);
-//             console.log(`y : ${y}`);
-
-//             const docker = document.querySelector('.docker');
-//             const vertical = docker.classList.contains('autoFlowColumn');
-//             let coords = []
-
-//             if(vertical) {
-//                 for(let i = 0; i < length; i++) coords.push([x, y + i]);
-//             }
-//             else {
-//                 for(let i = 0; i < length; i++) coords.push([x + i, y]);
-//             }
-
-//             // Check if valid
-
-//             let valid = coords.every(([cx, cy]) => cx < 10 && cy < 10 && player.gameboard.board[cx][cy] === null);
-
-//             coords.forEach(([cx, cy]) => {
-//                 const target = boardContainer.querySelector(`[data-x="${cx}"][data-y="${cy}"]`);
-//                 if(target) {
-//                     target.classList.add(valid ? "ship-preview" : "ship-preview-invalid");
-//                 }
-//             })
-//         })
-
-//         cell.addEventListener('dragleave', () => {
-//             boardContainer.querySelectorAll('.ship-preview, .ship-preview-invalid').forEach(
-//                 c => c.classList.remove('ship-preview', 'ship-preview-invalid')
-//             );
-//         })
-
-//         cell.addEventListener('drop', () => {
-//             boardContainer.querySelectorAll('.ship-preview', '.ship-preview-invalid').forEach(
-//                 c => c.classList.remove('ship-preview', 'ship-preview-invalid')
-//             );
-//         })
-//     })
-// }
 
 function placeShipsOnBoard(player) {
+
     const gameBoards = document.querySelector('.gameBoards');
 
     let player1Name = document.querySelector('.player1Name');
@@ -155,6 +110,7 @@ function placeShipsOnBoard(player) {
 
     // dragStartHandler
     function dragstartHandler(ev) {
+        document.getElementById('secondPlayerBoard').classList.remove('addPointer');
         ev.dataTransfer.setData("shipId", ev.target.id);
     }
 
@@ -236,7 +192,6 @@ function placeShipsOnBoard(player) {
     }
 
     buttonEventListener();
-    // addShipPreviewListeners(document.getElementById(player.name === INPUTNAMES.player1.value ? "firstPlayerBoard" : "secondPlayerBoard"), player);
 }
 let isRotated = false;
 
@@ -288,6 +243,7 @@ function buttonEventListener() {
 
             document.querySelector('.dockerContainer').classList.remove('player1Docker');
             document.querySelector('.dockerContainer').classList.add('player2Docker');
+            document.getElementById('secondPlayerBoard').classList.add('addPointer');
 
             document.getElementById('carrier').setAttribute('draggable', true);
             document.getElementById('carrier').style = "";
@@ -322,7 +278,11 @@ function buttonEventListener() {
                 }
                 const selectCells = document.querySelectorAll('.board > div > .cell');
                 selectCells.forEach((cell) => cell.classList.add('hide'));
+                document.querySelector('.onLoadHeading').remove();
+                document.querySelector('.playerTurn').style.display = "block";
+                document.getElementById('secondPlayerBoard').classList.remove('addPointer');
                 document.querySelector('.dockerContainer').remove();
+                
             })  
         }
     })
@@ -363,6 +323,12 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
             playerTurn.textContent = `${player2Name.textContent}'s Turn`;
         }
         if(result === "All ships have sunk") {
+            const playerWon = document.createElement('div');
+            playerWon.textContent = `${player1.name} Won`;
+            playerWon.classList.add('playerWon');
+
+            document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
+
             firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
             secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
         }
@@ -394,6 +360,12 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
             playerTurn.classList.add('player1');
         }
         if(result === "All ships have sunk") {
+            const playerWon = document.createElement('div');
+            playerWon.textContent = `${player2.name} Won`;
+            playerWon.classList.add('playerWon');
+
+            document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
+
             firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
             secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
         }
@@ -423,7 +395,7 @@ function updateGameMessage(gameUpdates, type) {
             break;
         case "All ships have sunk":
             gameUpdates.classList.add("gameover");
-            gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER!";
+            gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER! 🏆";
             document.querySelector('.container > .hide').remove();
             break;
     }
