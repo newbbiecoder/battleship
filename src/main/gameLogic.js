@@ -320,6 +320,7 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
             playerTurn.classList = "";
             playerTurn.classList.add('hide');
             playerTurn.classList.add("player2");
+            playerTurn.classList.add('playerTurn');
             playerTurn.textContent = `${player2Name.textContent}'s Turn`;
         }
         if(result === "All ships have sunk") {
@@ -328,6 +329,15 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
             playerWon.classList.add('playerWon');
 
             document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
+
+            const lobby = document.createElement('button');
+            lobby.textContent = "Lobby";
+            lobby.classList.add('lobby');
+            document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.player2Wrapper'));
+
+            lobby.addEventListener('click', () => {
+                window.location.reload();
+            })
 
             firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
             secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
@@ -366,6 +376,15 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
 
             document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
 
+            const lobby = document.createElement('button');
+            lobby.textContent = "Lobby";
+            lobby.classList.add('lobby');
+            document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.player2Wrapper'));
+
+            lobby.addEventListener('click', () => {
+                window.location.reload();
+            })
+
             firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
             secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
         }
@@ -396,7 +415,7 @@ function updateGameMessage(gameUpdates, type) {
         case "All ships have sunk":
             gameUpdates.classList.add("gameover");
             gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER! 🏆";
-            document.querySelector('.container > .hide').remove();
+            document.querySelector('.container > .playerTurn')?.remove();
             break;
     }
 }

@@ -194,6 +194,36 @@ button.submit:hover {
     font-family: Orbitron;
 }
 
+.notification {
+    position: fixed;
+    left: 10%;
+    bottom: 5%;
+    font-family: Orbitron;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: rgba(10, 10, 20, 0.85);
+    color: #ff4444;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    text-shadow:
+        0 0 5px #ff4444,
+        0 0 10px #ff4444,
+        0 0 20px #ff4444;
+    box-shadow: 0 0 12px rgba(255, 68, 68, 0.7);
+    opacity: 0;
+    animation: fadeInOut 3s ease forwards;
+    pointer-events: none; 
+    z-index: 9999;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+
 .gameUpdates {
     font-family: Orbitron;
     font-weight: bold;
@@ -528,4 +558,45 @@ button.submit:hover {
       0 0 120px #2af5ff;
     transform: scale(1.05);
   }
+}
+
+.lobby{
+    font-family: Orbitron;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    color: #2af5ff;
+    background: rgba(10, 10, 20, 0.9);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: 0.2s ease;
+    text-shadow:
+        0 0 5px #2af5ff,
+        0 0 10px #2af5ff,
+        0 0 20px #2af5ff;
+    box-shadow:
+        0 0 5px #2af5ff,
+        0 0 10px #2af5ff inset;
+}
+
+.lobby-btn:hover {
+    color: #8a2be2;
+    text-shadow:
+        0 0 6px #8a2be2,
+        0 0 12px #8a2be2,
+        0 0 24px #8a2be2;
+    box-shadow:
+        0 0 8px #8a2be2,
+        0 0 16px #8a2be2 inset;
+    transform: scale(1.05);
+}
+
+.lobby-btn:active {
+    transform: scale(0.95);
+    box-shadow:
+        0 0 4px #2af5ff inset,
+        0 0 8px #2af5ff inset;
 }
