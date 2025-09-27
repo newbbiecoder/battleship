@@ -1,8 +1,11 @@
 import INPUTNAMES from "./main/inputName.js";
+import INPUTCOMPUTERNAME from "./main/inputNameComputer.js";
 import { createBoards } from "./main/gameLogic.js";
+import { createBoardsComputer } from "./main/gameLogicComputer.js";
 import "./style.css"
 
 const pvp = document.querySelector('.modes > p:first-child');
+const pvc = document.querySelector('.modes > p:last-child');
 
 
 pvp.addEventListener('click', () => {
@@ -27,3 +30,12 @@ pvp.addEventListener('click', () => {
 });
 
 
+pvc.addEventListener('click', () => {
+    INPUTCOMPUTERNAME.askPlayersNames();
+
+    const submit = document.querySelector('.submit');
+
+    submit.addEventListener('click', () => {
+        createBoardsComputer();
+    })
+})

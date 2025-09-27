@@ -1,11 +1,11 @@
-import INPUTNAMES from "./inputName.js";
-import { renderBoard } from "./playerVSplayer.js";
+import INPUTCOMPUTERNAME from "./inputNameComputer.js";
+import { renderBoardComputer } from "./playerVScomputer.js";
 import script from "../script.js";
 
 const container = document.querySelector('.container');
-let players = {};
 
-function createBoards() {
+let computerPlayers = {};
+function createBoardsComputer() {
     container.innerHTML = "";
 
     const onLoadHeading = document.createElement('div');
@@ -21,63 +21,61 @@ function createBoards() {
     const gameUpdates = document.createElement('div');
     gameUpdates.classList.add('gameUpdates');
     container.appendChild(gameUpdates);
-    
-    const player2 = new script.Player(INPUTNAMES.player2.value);
 
-    const player2Wrapper = document.createElement('div');
-    player2Wrapper.classList.add('player2Wrapper');
+    const player = new script.Player(INPUTCOMPUTERNAME.player.value);
 
-    const player2Name = document.createElement('p');
-    player2Name.classList.add('player2Name');
-    player2Name.textContent = `${INPUTNAMES.player2.value}`;
-    player2Wrapper.appendChild(player2Name);
+    const playerWrapper = document.createElement('div');
+    playerWrapper.classList.add('playerWrapper');
 
-    const secondPlayerBoardContainer = document.createElement('div');
-    secondPlayerBoardContainer.id = "secondPlayerBoard";
-    secondPlayerBoardContainer.classList.add("board");
-    player2Wrapper.appendChild(secondPlayerBoardContainer);
+    const playerName = document.createElement('p');
+    playerName.classList.add('playerName');
+    playerName.textContent = `${INPUTCOMPUTERNAME.player.value}`;
+    playerWrapper.appendChild(playerName);
 
-    
-    const player1 = new script.Player(INPUTNAMES.player1.value);
+    const humanPlayerBoardContainer = document.createElement('div');
+    humanPlayerBoardContainer.id = "humanPlayerBoard";
+    humanPlayerBoardContainer.classList.add("board");
+    playerWrapper.appendChild(humanPlayerBoardContainer);
 
-    const player1Wrapper = document.createElement('div');
-    player1Wrapper.classList.add('player1Wrapper');
+    const computer = new script.Player("Computer", true);
 
-    const player1Name = document.createElement('p');
-    player1Name.classList.add('player1Name');
-    player1Name.textContent = `${INPUTNAMES.player1.value}`;
-    player1Wrapper.appendChild(player1Name);
+    const computerWrapper = document.createElement('p');
+    computerWrapper.classList.add('computerWrapper');
 
-    const firstPlayerBoardContainer = document.createElement('div');
-    firstPlayerBoardContainer.id = "firstPlayerBoard"
-    firstPlayerBoardContainer.classList.add('board');
-    player1Wrapper.appendChild(firstPlayerBoardContainer);
+    const computerName = document.createElement('p');
+    computerName.classList.add('computerName');
+    computerName.textContent = "Computer";
+    computerWrapper.appendChild(computerName);
+
+    const computerPlayerBoardContainer = document.createElement('div');
+    computerPlayerBoardContainer.id = "computerPlayerBoard";
+    computerPlayerBoardContainer.classList.add("board");
+    computerWrapper.appendChild(computerPlayerBoardContainer);
 
     const gameBoards = document.createElement('div');
     gameBoards.classList.add('gameBoards'); 
-    gameBoards.appendChild(player1Wrapper);
-    gameBoards.appendChild(player2Wrapper);
+    gameBoards.appendChild(playerWrapper);
+    gameBoards.appendChild(computerWrapper);
     container.appendChild(gameBoards);
 
-    renderBoard(player1.gameboard.showBoard(), firstPlayerBoardContainer);
-    renderBoard(player2.gameboard.showBoard(), secondPlayerBoardContainer);
-    // Place player1 ships
-    
-    placeShipsOnBoard(player1);
-    
-    // Event Listeners for both boards
-    boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer);
-    
-    players = {player1, player2};
-    return players;
+    renderBoardComputer(player.gameboard.showBoard(), humanPlayerBoardContainer);
+    renderBoardComputer(computer.gameboard.showBoard(), computerPlayerBoardContainer);
+
+    document.getElementById('computerPlayerBoard').style.display = "none";
+
+    placeShipsOnBoardComputer(player);
+    placeRandomShipsOnBoard(computer);
+
+    boardEventListeners(player, humanPlayerBoardContainer, computer, computerPlayerBoardContainer);
+
+    computerPlayers = {player, computer};
+    return computerPlayers;
 }
 
-
-function placeShipsOnBoard(player) {
-
+function placeShipsOnBoardComputer(player) {
     const gameBoards = document.querySelector('.gameBoards');
 
-    let player1Name = document.querySelector('.player1Name');
+    let playerName = document.querySelector('.playerName');
 
     const dockerContainer = document.createElement('div');
     dockerContainer.classList.add('dockerContainer');
@@ -92,16 +90,15 @@ function placeShipsOnBoard(player) {
     dockerContainer.appendChild(rotateButton);
     rotateButton.textContent = "↻"
 
-    if(player.name === player1Name.textContent) {
-        dockerContainer.classList.add('player1Docker');
+    if(player.name === playerName.textContent) {
+        dockerContainer.classList.add('playerDocker');
         info.textContent = "Place all of your ships on the board to start the game !";
     }
-
 
     const docker = document.createElement('div');
     docker.classList.add('docker');
     dockerContainer.appendChild(docker);
-    
+
     // Continue Button
     const continueButton = document.createElement('div');
     continueButton.classList.add('continueButton');
@@ -110,7 +107,7 @@ function placeShipsOnBoard(player) {
 
     // dragStartHandler
     function dragstartHandler(ev) {
-        document.getElementById('secondPlayerBoard').classList.remove('addPointer');
+        document.getElementById('humanPlayerBoard').classList.remove('addPointer');
         ev.dataTransfer.setData("shipId", ev.target.id);
     }
 
@@ -193,6 +190,7 @@ function placeShipsOnBoard(player) {
 
     buttonEventListener();
 }
+
 let isRotated = false;
 
 function buttonEventListener() {
@@ -241,91 +239,56 @@ function buttonEventListener() {
         }
         else {
 
-            document.querySelector('.dockerContainer').classList.remove('player1Docker');
-            document.querySelector('.dockerContainer').classList.add('player2Docker');
-            document.getElementById('secondPlayerBoard').classList.add('addPointer');
-
-            document.getElementById('carrier').setAttribute('draggable', true);
-            document.getElementById('carrier').style = "";
-
-            document.getElementById('battleship').setAttribute('draggable', true);
-            document.getElementById('battleship').style = "";
-
-            document.getElementById('cruiser').setAttribute('draggable', true);
-            document.getElementById('cruiser').style = "";
-
-            document.getElementById('submarine').setAttribute('draggable', true);
-            document.getElementById('submarine').style = "";
-
-            document.getElementById('destroyer').setAttribute('draggable', true);
-            document.getElementById('destroyer').style = ""
-
+            document.querySelector('.dockerContainer').classList.remove('playerDocker');
+            document.getElementById('computerPlayerBoard').style.display = "grid";
             continueButton.remove();
 
-            const submitButton = document.createElement('button');
-            document.querySelector(".dockerContainer").appendChild(submitButton);
-            submitButton.classList.add('continueButton');
-            submitButton.textContent = "Submit";
-
-            submitButton.addEventListener('click', () => {
-                if(carrier.draggable || battleship.draggable ||
-                    cruiser.draggable || submarine.draggable ||
-                    destroyer.draggable
-                ) {  
-                    info.classList.add('error');
-                    info.textContent = "Place all of the ships first";
-                    return;
-                }
-                const selectCells = document.querySelectorAll('.board > div > .cell');
-                selectCells.forEach((cell) => cell.classList.add('hide'));
-                document.querySelector('.onLoadHeading').remove();
-                document.querySelector('.playerTurn').style.display = "block";
-                document.getElementById('secondPlayerBoard').classList.remove('addPointer');
-                document.querySelector('.dockerContainer').remove();
-                
-            })  
+            document.querySelector('.onLoadHeading').remove();
+            document.querySelector('.playerTurn').style.display = "block";
+            document.querySelector('.dockerContainer').remove();
         }
     })
 }
 
-let player1Turn = true;
+let humanTurn = true;
 
-function boardEventListeners(player1, firstPlayerBoardContainer, player2, secondPlayerBoardContainer) {
+function boardEventListeners(player, humanPlayerBoardContainer, computer, computerPlayerBoardContainer) {
     const gameUpdates = document.querySelector('.gameUpdates');
     const playerTurn = document.querySelector('.playerTurn');
 
-    const player1Name = document.querySelector('.player1Name');
-    const player2Name = document.querySelector('.player2Name');
+    const playerName = document.querySelector('.playerName');
+    const computerName = document.querySelector('.computerName');
 
-    playerTurn.textContent = `${player1Name.textContent}'s Turn`
-    playerTurn.classList.add('player1');
+    playerTurn.textContent = `${player.name}'s Turn`
+    playerTurn.classList.add('player');
     
-    function secondEventListener(e) {
-        if(!player1Turn) return;
-        playerTurn.textContent = `${player1Name.textContent}'s Turn`;
+    function computerEventListener(e) {      
+        if(!humanTurn) computerAttack();
+        playerTurn.textContent = `${player.name}'s Turn`;
         if(!e.target.classList.contains("cell")) return;
         if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
 
         const x = Number(e.target.dataset.x);
         const y = Number(e.target.dataset.y);
         
-        const result = player1.attack(player2, [x,y]);
-        renderBoard(player2.gameboard.showBoard(), document.getElementById('secondPlayerBoard'));
-        console.log("Player 2", result);
+        const result = player.attack(computer, [x,y]);
+        renderBoardComputer(computer.gameboard.showBoard(), document.getElementById('computerPlayerBoard'));
+        console.log("Computer: ", result);
         
         updateGameMessage(gameUpdates, result);
 
         if(result === "Hit" || result === "Ship sunk") return;
         if(result === "Miss") {
+            document.querySelector('.gameUpdates').style.display = "block";
             playerTurn.classList = "";
-            playerTurn.classList.add('hide');
-            playerTurn.classList.add("player2");
+            // playerTurn.classList.remove('hide');
+            playerTurn.classList.add("computer");
             playerTurn.classList.add('playerTurn');
-            playerTurn.textContent = `${player2Name.textContent}'s Turn`;
+            playerTurn.textContent = `Waiting for ${computerName.textContent}'s...`;
         }
         if(result === "All ships have sunk") {
             const playerWon = document.createElement('div');
-            playerWon.textContent = `${player1.name} Won`;
+            playerWon.textContent = `${player.name} Won`;
             playerWon.classList.add('playerWon');
 
             document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
@@ -333,68 +296,121 @@ function boardEventListeners(player1, firstPlayerBoardContainer, player2, second
             const lobby = document.createElement('button');
             lobby.textContent = "Lobby";
             lobby.classList.add('lobby');
-            document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.player2Wrapper'));
+            document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.computerWrapper'));
 
             lobby.addEventListener('click', () => {
                 window.location.reload();
             })
 
-            firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
-            secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
+            computerPlayerBoardContainer.removeEventListener('click', computerEventListener);
         }
-        player1Turn = false;
+        humanTurn = false;
+        computerAttack();
+
+        function randomNumGen() {
+            let newX = Math.floor(Math.random() * 10);
+            let newY = Math.floor(Math.random() * 10);
+            return [newX,newY]
+        }
+
+        function computerAttack() {
+            document.querySelector('.gameUpdates').style.display = "block";
+            document.getElementById('computerPlayerBoard').classList.add('addPointer');
+            if(humanTurn) return;
+            playerTurn.textContent = `Waiting for ${computerName.textContent}...`;
+
+            let newX = randomNumGen()[0] 
+            let newY = randomNumGen()[1]
+ 
+            while(player.gameboard.board[newX][newY] === 'X' || player.gameboard.board[newX][newY] === '.') {
+                newX = randomNumGen()[0];
+                newY = randomNumGen()[1];
+            }
+
+            console.log(player.gameboard.board[newX][newY]);
+            const result = computer.attack(player, [newX, newY]);
+
+            setTimeout(() => {
+                document.getElementById('computerPlayerBoard').classList.remove('addPointer');
+                renderBoardComputer(player.gameboard.showBoard(), document.getElementById('humanPlayerBoard'));
+                console.log("Player: ", result);
+                console.log(player.gameboard.showBoard());
+
+                updateGameMessage(gameUpdates, result);
+
+                console.log(`x: ${newX}`);
+                console.log(`y: ${newY}`);
+
+                if(result === "Hit" || result === "Ship sunk") {
+                    updateGameMessage(gameUpdates, result);
+                    computerAttack();
+                }
+                if(result === "Miss") {
+                    playerTurn.classList = "";
+                    playerTurn.classList.add('hide');
+                    playerTurn.classList.add("player");
+                    playerTurn.classList.add('playerTurn');
+                    playerTurn.textContent = `${playerName.textContent}'s Turn`;
+                    humanTurn = true;
+                }
+
+                if(result === "All ships have sunk") {
+                    const playerWon = document.createElement('div');
+                    playerWon.textContent = `${computerName.textContent} Won`;
+                    playerWon.classList.add('playerWon');
+
+                    document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
+
+                    const lobby = document.createElement('button');
+                    lobby.textContent = "Lobby";
+                    lobby.classList.add('lobby');
+                    document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.computerWrapper'));
+
+                    lobby.addEventListener('click', () => {
+                        window.location.reload();
+                    })
+
+                    computerPlayerBoardContainer.removeEventListener('click', computerEventListener); 
+                }
+                
+            }, 2000)             
+        }
     }
 
-    secondPlayerBoardContainer.addEventListener('click', secondEventListener);
-        
-    function firstEventListener(e) {
-        if(player1Turn) return;
-        playerTurn.textContent = `${player2Name.textContent}'s Turn`;
-        if(!e.target.classList.contains("cell")) return;
-        if(e.target.classList.contains("hit") || e.target.classList.contains("miss")) return;
+    computerPlayerBoardContainer.addEventListener('click', computerEventListener);
+}
 
-        const x = Number(e.target.dataset.x);
-        const y = Number(e.target.dataset.y);
+function placeRandomShipsOnBoard(computer, ships = [5,4,3,3,2]) {
+    for(let length of ships) {
+        let placed = false;
 
-        let result = player2.attack(player1, [x,y]);
-        renderBoard(player1.gameboard.showBoard(), document.getElementById('firstPlayerBoard'));
-        console.log("Player 1", result);
+        while(!placed) {
+            const isVertical = Math.random() < 0.5;
 
-        updateGameMessage(gameUpdates, result);
+            const x = Math.floor(Math.random() * 10);
+            const y = Math.floor(Math.random() * 10);
 
-        if(result === "Hit" || result === "Ship sunk") return;
-        if(result === "Miss") {
-            playerTurn.classList = "";
-            playerTurn.textContent = `${player1Name.textContent}'s Turn`;
-            playerTurn.classList.add('hide');
-            playerTurn.classList.add('player1');
-            playerTurn.classList.add('playerTurn');
+            let coords = [];
+
+            if(isVertical) {
+                if(x + length > 10) continue;
+                coords = Array.from({ length }, (_, i) => [x + i, y]);
+            }
+            else {
+                if(x + length > 10) continue;
+                coords = Array.from({ length }, (_, i) => [x, y + i]);
+            }
+
+            const valid = coords.every(([cx, cy]) => !computer.gameboard.board[cx][cy]);
+
+            if(valid) {
+                if(isVertical) computer.gameboard.placeShip(length, [[x,y], [x + length - 1,y]]);
+                computer.gameboard.placeShip(length, [[x,y], [x,y + length - 1]]);
+                placed = true;
+            }
         }
-        if(result === "All ships have sunk") {
-            const playerWon = document.createElement('div');
-            playerWon.textContent = `${player2.name} Won`;
-            playerWon.classList.add('playerWon');
-
-            document.querySelector('.container').insertBefore(playerWon, document.querySelector('.gameUpdates'));
-
-            const lobby = document.createElement('button');
-            lobby.textContent = "Lobby";
-            lobby.classList.add('lobby');
-            document.querySelector('.gameBoards').insertBefore(lobby, document.querySelector('.player2Wrapper'));
-
-            lobby.addEventListener('click', () => {
-                window.location.reload();
-            })
-
-            firstPlayerBoardContainer.removeEventListener('click', firstEventListener);
-            secondPlayerBoardContainer.removeEventListener('click', secondEventListener)
-        }
-
-        player1Turn = true;
-    } 
-    firstPlayerBoardContainer.addEventListener('click', firstEventListener);
-}    
-
+    }
+}
 
 function updateGameMessage(gameUpdates, type) {
     gameUpdates.classList = "";
@@ -421,4 +437,4 @@ function updateGameMessage(gameUpdates, type) {
     }
 }
 
-export {createBoards, players}
+export {createBoardsComputer, computerPlayers}
