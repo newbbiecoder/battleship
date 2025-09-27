@@ -36,6 +36,16 @@ pvc.addEventListener('click', () => {
     const submit = document.querySelector('.submit');
 
     submit.addEventListener('click', () => {
+        const playerInput = document.getElementById('player');
+
+        if(playerInput.value.trim().length === 0) {
+            const notification = document.createElement('div');
+            notification.textContent = "Enter Player Name";
+            notification.classList.add('notification');
+            document.querySelector('.container').appendChild(notification);
+            return;
+        }
+
         createBoardsComputer();
     })
 })
