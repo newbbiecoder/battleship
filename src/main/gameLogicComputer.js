@@ -273,7 +273,6 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
         
         const result = player.attack(computer, [x,y]);
         renderBoardComputer(computer.gameboard.showBoard(), document.getElementById('computerPlayerBoard'));
-        console.log("Computer: ", result);
         
         updateGameMessage(gameUpdates, result);
 
@@ -281,10 +280,10 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
         if(result === "Miss") {
             document.querySelector('.gameUpdates').style.display = "block";
             playerTurn.classList = "";
-            // playerTurn.classList.remove('hide');
             playerTurn.classList.add("computer");
             playerTurn.classList.add('playerTurn');
             playerTurn.textContent = `Waiting for ${computerName.textContent}'s...`;
+            humanTurn = false;
         }
         if(result === "All ships have sunk") {
             const playerWon = document.createElement('div');
@@ -303,49 +302,38 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
             })
 
             computerPlayerBoardContainer.removeEventListener('click', computerEventListener);
+            humanTurn = true;
         }
-        humanTurn = false;
+
         computerAttack();
 
-        function randomNumGen() {
-            let newX = Math.floor(Math.random() * 10);
-            let newY = Math.floor(Math.random() * 10);
-            return [newX,newY]
-        }
-
         function computerAttack() {
+            const gameUpdates = document.querySelector('.gameUpdates');
+            const playerTurn = document.querySelector('.playerTurn');
+
+            const playerName = document.querySelector('.playerName');
+            const computerName = document.querySelector('.computerName');
+
+
             document.querySelector('.gameUpdates').style.display = "block";
             document.getElementById('computerPlayerBoard').classList.add('addPointer');
             if(humanTurn) return;
             playerTurn.textContent = `Waiting for ${computerName.textContent}...`;
 
-            let newX = randomNumGen()[0] 
-            let newY = randomNumGen()[1]
- 
-            while(player.gameboard.board[newX][newY] === 'X' || player.gameboard.board[newX][newY] === '.') {
-                newX = randomNumGen()[0];
-                newY = randomNumGen()[1];
-            }
-
-            console.log(player.gameboard.board[newX][newY]);
-            const result = computer.attack(player, [newX, newY]);
+            let computerAttacks = computerMediumAttack(computer, player);
+            let {computerResult} = computerAttacks;
 
             setTimeout(() => {
                 document.getElementById('computerPlayerBoard').classList.remove('addPointer');
                 renderBoardComputer(player.gameboard.showBoard(), document.getElementById('humanPlayerBoard'));
-                console.log("Player: ", result);
-                console.log(player.gameboard.showBoard());
 
-                updateGameMessage(gameUpdates, result);
+                updateGameMessage(gameUpdates, computerResult);
 
-                console.log(`x: ${newX}`);
-                console.log(`y: ${newY}`);
-
-                if(result === "Hit" || result === "Ship sunk") {
-                    updateGameMessage(gameUpdates, result);
+                if(computerResult === "Hit" || computerResult === "Ship sunk") {
+                    updateGameMessage(gameUpdates, computerResult);
                     computerAttack();
                 }
-                if(result === "Miss") {
+                if(computerResult === "Miss") {
                     playerTurn.classList = "";
                     playerTurn.classList.add('hide');
                     playerTurn.classList.add("player");
@@ -354,7 +342,7 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
                     humanTurn = true;
                 }
 
-                if(result === "All ships have sunk") {
+                if(computerResult === "All ships have sunk") {
                     const playerWon = document.createElement('div');
                     playerWon.textContent = `${computerName.textContent} Won`;
                     playerWon.classList.add('playerWon');
@@ -369,8 +357,9 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
                     lobby.addEventListener('click', () => {
                         window.location.reload();
                     })
-
-                    computerPlayerBoardContainer.removeEventListener('click', computerEventListener); 
+                    
+                    computerPlayerBoardContainer.removeEventListener('click', computerEventListener);
+                    humanTurn = true;
                 }
                 
             }, 2000)             
@@ -379,6 +368,81 @@ function boardEventListeners(player, humanPlayerBoardContainer, computer, comput
 
     computerPlayerBoardContainer.addEventListener('click', computerEventListener);
 }
+
+function computerMediumAttack(computer, player, previousHits = []) {
+
+    function isValid(x, y) {
+        if (x < 0 || y < 0) return false; 
+        if (x >= 10 || y >= 10) return false;
+
+        // if already attacked
+        if (player.gameboard.board[x][y] === "X") return false;
+        if (player.gameboard.board[x][y] === ".") return false;
+
+        return true;
+    }
+
+    if (previousHits.length >= 2) {
+        const [x1, y1] = previousHits[0];
+        const [x2, y2] = previousHits[1];
+
+        // horizontal 
+        if (x1 === x2) {
+            const minY = Math.min(...previousHits.map(([_, y]) => y));
+            const maxY = Math.max(...previousHits.map(([_, y]) => y));
+
+            if (isValid(x1, minY - 1)) return attackCell(x1, minY - 1);
+            if (isValid(x1, maxY + 1)) return attackCell(x1, maxY + 1);
+        }
+
+        // vertical 
+        if (y1 === y2) {
+            const minX = Math.min(...previousHits.map(([x]) => x));
+            const maxX = Math.max(...previousHits.map(([x]) => x));
+
+            if (isValid(minX - 1, y1)) return attackCell(minX - 1, y1);
+            if (isValid(maxX + 1, y1)) return attackCell(maxX + 1, y1);
+        }
+    }
+
+    // gEt one hit and attack the neighbors
+    if (previousHits.length > 0) {
+        const [lastX, lastY] = previousHits[previousHits.length - 1];
+        const directions = [
+        [lastX - 1, lastY],
+        [lastX + 1, lastY],
+        [lastX, lastY - 1],
+        [lastX, lastY + 1],
+        ];
+
+        for (const [x, y] of directions) {
+            if (isValid(x, y)) return attackCell(x, y);
+        }
+    }
+
+    // if no hit, do random attack
+    let newX, newY;
+    do {
+        newX = Math.floor(Math.random() * 10);
+        newY = Math.floor(Math.random() * 10);
+    } while (!isValid(newX, newY));
+
+    return attackCell(newX, newY);
+
+
+    function attackCell(x, y) {
+        const computerResult = computer.attack(player, [x, y]);
+
+        if (computerResult === "Hit") {
+            previousHits.push([x, y]);
+        } else if (computerResult === "Ship sunk") {
+            previousHits = []; 
+        }
+
+        return { computerResult };
+    }
+}
+
 
 function placeRandomShipsOnBoard(computer, ships = [5,4,3,3,2]) {
     for(let length of ships) {
@@ -397,15 +461,17 @@ function placeRandomShipsOnBoard(computer, ships = [5,4,3,3,2]) {
                 coords = Array.from({ length }, (_, i) => [x + i, y]);
             }
             else {
-                if(x + length > 10) continue;
+                if(y + length > 10) continue;
                 coords = Array.from({ length }, (_, i) => [x, y + i]);
             }
 
             const valid = coords.every(([cx, cy]) => !computer.gameboard.board[cx][cy]);
 
-            if(valid) {
-                if(isVertical) computer.gameboard.placeShip(length, [[x,y], [x + length - 1,y]]);
-                computer.gameboard.placeShip(length, [[x,y], [x,y + length - 1]]);
+            if (valid) {
+                if (isVertical) computer.gameboard.placeShip(length, [[x,y], [x + length - 1,y]]);
+                else computer.gameboard.placeShip(length, [[x,y], [x,y + length - 1]]);
+
+                console.log(computer.gameboard.showBoard());
                 placed = true;
             }
         }
@@ -432,7 +498,8 @@ function updateGameMessage(gameUpdates, type) {
         case "All ships have sunk":
             gameUpdates.classList.add("gameover");
             gameUpdates.textContent = "🏆 ALL SHIPS SUNK! GAME OVER! 🏆";
-            document.querySelector('.container > .playerTurn')?.remove();
+            document.querySelector('.container > .playerTurn').style.display = "none";
+            document.querySelector('.gameUpdates').style.display = "none";
             break;
     }
 }
